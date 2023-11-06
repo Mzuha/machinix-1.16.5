@@ -1,9 +1,13 @@
 package com.mzuha.machinix;
 
 import com.mzuha.machinix.block.ModBlocks;
+import com.mzuha.machinix.block.container.ModContainers;
+import com.mzuha.machinix.block.screen.CrusherScreen;
+import com.mzuha.machinix.block.tileentity.ModTileEntities;
 import com.mzuha.machinix.item.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -35,6 +39,9 @@ public class MachinixMod {
         ModItems.register(eventBus);
         ModBlocks.register(eventBus);
 
+        ModTileEntities.register(eventBus);
+        ModContainers.register(eventBus);
+
         eventBus.addListener(this::setup);
         eventBus.addListener(this::enqueueIMC);
         eventBus.addListener(this::processIMC);
@@ -52,6 +59,9 @@ public class MachinixMod {
 
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client;
+        ScreenManager.registerFactory(
+            ModContainers.CRUSHER_CONTAINER.get(), CrusherScreen::new
+        );
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

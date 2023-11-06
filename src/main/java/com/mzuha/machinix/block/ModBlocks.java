@@ -1,5 +1,6 @@
 package com.mzuha.machinix.block;
 
+import com.mzuha.machinix.block.custom.CrusherBlock;
 import com.mzuha.machinix.item.ModItems;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;

@@ -15,5 +15,6 @@ public class ModLanguageProvider extends LanguageProvider {
     @Override
     protected void addTranslations() {
         add("block.machinix.crusher_block", "Crusher");
+        add("screen.machinix.crusher", "Crusher");
     }
 }
