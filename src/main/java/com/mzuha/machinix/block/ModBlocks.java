@@ -1,5 +1,6 @@
 package com.mzuha.machinix.block;
 
+import com.mzuha.machinix.block.custom.MaceratorBlock;
 import com.mzuha.machinix.item.ModItems;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -22,9 +23,9 @@ public class ModBlocks {
         ForgeRegistries.BLOCKS, MOD_ID
     );
 
-    public static final RegistryObject<Block> CRUSHER = registerBlock(
-        "crusher_block",
-        () -> new CrusherBlock(
+    public static final RegistryObject<Block> MACERATOR_BLOCK = registerBlock(
+        "macerator_block",
+        () -> new MaceratorBlock(
             AbstractBlock.Properties.create(Material.IRON)
         )
     );

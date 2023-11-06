@@ -16,7 +16,7 @@ public class ModBlockStatesProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        blockWithItem(ModBlocks.CRUSHER);
+        blockWithItem(ModBlocks.MACERATOR_BLOCK);
     }
 
     private void blockWithItem(RegistryObject<Block> block) {
