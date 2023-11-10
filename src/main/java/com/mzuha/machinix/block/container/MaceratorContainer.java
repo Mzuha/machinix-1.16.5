@@ -45,6 +45,7 @@ public class MaceratorContainer extends Container {
         this.world = playerInventory.player.world;
         this.maceratorData = data;
         this.playerInventory = new InvWrapper(playerInventory);
+        this.trackIntArray(data);
 
         layoutPlayerInventorySlots(8, 84);
 
@@ -86,9 +87,7 @@ public class MaceratorContainer extends Container {
     }
 
     public boolean isCrafting() {
-        System.out.println(maceratorData.get(0));
-//        return maceratorData.get(0) > 0;
-        return false;
+        return maceratorData.get(0) > 0;
     }
 
     public int getScaledProgress() {

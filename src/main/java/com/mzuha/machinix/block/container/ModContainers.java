@@ -16,10 +16,10 @@ public class ModContainers {
 
     public static void register(IEventBus eventBus) {
         CONTAINERS.register(eventBus);
-    }    public static final RegistryObject<ContainerType<MaceratorContainer>> MACERATOR_CONTAINER = CONTAINERS.register(
+    }
+
+    public static final RegistryObject<ContainerType<MaceratorContainer>> MACERATOR_CONTAINER = CONTAINERS.register(
         "macerator_container",
         () -> IForgeContainerType.create(MaceratorContainer::new)
     );
-
-
 }
