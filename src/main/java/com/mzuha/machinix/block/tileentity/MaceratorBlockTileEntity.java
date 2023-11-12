@@ -2,12 +2,15 @@ package com.mzuha.machinix.block.tileentity;
 
 import com.mzuha.machinix.block.ModBlocks;
 import com.mzuha.machinix.block.container.MaceratorContainer;
+import com.mzuha.machinix.energy.ModEnergyStorage;
+import com.mzuha.machinix.item.ModItems;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -29,12 +32,20 @@ public class MaceratorBlockTileEntity extends TileEntity implements ITickableTil
 
     public static final int MACERATOR_INPUT_SLOT = 0;
     public static final int MACERATOR_OUTPUT_SLOT = 1;
+    public static final int ENERGY_PER_REDSTONE = 640;
 
     private final ItemStackHandler itemStackHandler = createHandler();
     private final LazyOptional<IItemHandler> handler = LazyOptional.of(() -> itemStackHandler);
     private final IIntArray maceratorData;
+    private final ModEnergyStorage energyStorage = new ModEnergyStorage(64000, 500) {
+        @Override
+        public void onEnergyChanged() {
+            markDirty();
+        }
+    };
     public int maxProgress = 100;
     private int progress = 0;
+    private final int energyPerTick = 32;
 
     public MaceratorBlockTileEntity(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
@@ -46,6 +57,10 @@ public class MaceratorBlockTileEntity extends TileEntity implements ITickableTil
                         return MaceratorBlockTileEntity.this.progress;
                     case 1:
                         return MaceratorBlockTileEntity.this.maxProgress;
+                    case 2:
+                        return energyStorage.getEnergyStored();
+                    case 3:
+                        return energyStorage.getMaxEnergyStored();
 
                     default:
                         return 0;
@@ -59,12 +74,14 @@ public class MaceratorBlockTileEntity extends TileEntity implements ITickableTil
                         MaceratorBlockTileEntity.this.progress = value;
                     case 1:
                         MaceratorBlockTileEntity.this.maxProgress = value;
+                    case 2:
+                        energyStorage.setEnergy(value);
                 }
             }
 
             @Override
             public int size() {
-                return 2;
+                return 4;
             }
         };
     }
@@ -84,8 +101,9 @@ public class MaceratorBlockTileEntity extends TileEntity implements ITickableTil
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
                 switch (slot) {
                     case 0:
+                        return stack.getItem() == ModBlocks.URANIUM_ORE.get().asItem() || stack.getItem() == Items.REDSTONE;
                     case 1:
-                        return stack.getItem() == ModBlocks.MACERATOR_BLOCK.get().asItem();
+                        return stack.getItem() == ModItems.URANIUM.get().asItem();
                 }
                 return false;
             }
@@ -110,6 +128,7 @@ public class MaceratorBlockTileEntity extends TileEntity implements ITickableTil
     public void read(BlockState state, CompoundNBT nbt) {
         itemStackHandler.deserializeNBT(nbt.getCompound("macerator.inv"));
         progress = nbt.getInt("macerator.progress");
+        energyStorage.setEnergy(nbt.getInt("macerator.energy"));
         super.read(state, nbt);
     }
 
@@ -117,6 +136,7 @@ public class MaceratorBlockTileEntity extends TileEntity implements ITickableTil
     public CompoundNBT write(CompoundNBT compound) {
         compound.put("macerator.inv", itemStackHandler.serializeNBT());
         compound.putInt("macerator.progress", progress);
+        compound.putInt("macerator.energy", energyStorage.getEnergyStored());
         return super.write(compound);
     }
 
@@ -132,25 +152,47 @@ public class MaceratorBlockTileEntity extends TileEntity implements ITickableTil
     @Override
     public void tick() {
         if (world.isRemote) return;
-        if (isOutputSlotEmptyOrNotFull()) {
-            if (hasRecipe()) {
-                progress++;
-                if (hasRecipeFinished()) {
-                    craftItem();
-                    markDirty();
+        addEnergyFromRedstone();
+        if (hasEnoughEnergy()) {
+            if (isOutputSlotEmptyOrNotFull()) {
+                if (hasRecipe()) {
+                    increaseProgress();
+                    if (hasRecipeFinished()) {
+                        craftItem();
+                        markDirty();
+                        resetProgress();
+                    }
+                } else {
                     resetProgress();
                 }
             } else {
                 resetProgress();
             }
-        } else {
-            resetProgress();
         }
+    }
+
+    private void addEnergyFromRedstone() {
+        if (itemStackHandler.getStackInSlot(MACERATOR_INPUT_SLOT).getItem() == Items.REDSTONE
+            && energyStorage.getEnergyStored() + ENERGY_PER_REDSTONE <= energyStorage.getMaxEnergyStored()) {
+            energyStorage.setEnergy(
+                energyStorage.getEnergyStored() + ENERGY_PER_REDSTONE
+            );
+            itemStackHandler.extractItem(MACERATOR_INPUT_SLOT, 1, false);
+        }
+    }
+
+    private void increaseProgress() {
+        progress++;
+        energyStorage.extractEnergy(energyPerTick, false);
+    }
+
+    private boolean hasEnoughEnergy() {
+        return energyStorage.getEnergyStored() >= energyPerTick;
     }
 
     private void craftItem() {
         itemStackHandler.extractItem(MACERATOR_INPUT_SLOT, 1, false);
-        itemStackHandler.insertItem(MACERATOR_OUTPUT_SLOT, new ItemStack(ModBlocks.MACERATOR_BLOCK.get(), 2), false);
+        itemStackHandler.insertItem(MACERATOR_OUTPUT_SLOT, new ItemStack(ModItems.URANIUM.get(), 2), false);
     }
 
     private void resetProgress() {
@@ -162,7 +204,7 @@ public class MaceratorBlockTileEntity extends TileEntity implements ITickableTil
     }
 
     private boolean hasRecipe() {
-        return itemStackHandler.getStackInSlot(MACERATOR_INPUT_SLOT).getItem() == ModBlocks.MACERATOR_BLOCK.get().asItem();
+        return itemStackHandler.getStackInSlot(MACERATOR_INPUT_SLOT).getItem() == ModBlocks.URANIUM_ORE.get().asItem();
     }
 
     private boolean isOutputSlotEmptyOrNotFull() {

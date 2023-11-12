@@ -15,6 +15,12 @@ public class ModLanguageProvider extends LanguageProvider {
     @Override
     protected void addTranslations() {
         add("block.machinix.macerator_block", "Macerator");
+        add("block.machinix.uranium_ore", "Uranium ore");
+
         add("screen.machinix.macerator", "Macerator");
+
+        add("itemGroup.machinixModGroup", "Machinix");
+
+        add("item.machinix.uranium", "Uranium");
     }
 }

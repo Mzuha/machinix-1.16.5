@@ -1,4 +1,7 @@
 {
   "block.machinix.macerator_block": "Macerator",
+  "block.machinix.uranium_ore": "Uranium ore",
+  "item.machinix.uranium": "Uranium",
+  "itemGroup.machinixModGroup": "Machinix",
   "screen.machinix.macerator": "Macerator"
 }

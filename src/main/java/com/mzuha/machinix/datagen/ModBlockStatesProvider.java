@@ -17,7 +17,10 @@ public class ModBlockStatesProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         blockWithItem(ModBlocks.MACERATOR_BLOCK);
+        blockWithItem(ModBlocks.URANIUM_ORE);
+
     }
+
 
     private void blockWithItem(RegistryObject<Block> block) {
         simpleBlock(block.get(), cubeAll(block.get()));

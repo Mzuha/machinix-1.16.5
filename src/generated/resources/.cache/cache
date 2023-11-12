@@ -1,4 +1,8 @@
 6a13b708e8c56bc44b9f310bef556c09980c9b7d assets/machinix/blockstates/macerator_block.json
-a5ad5ca374522db9fdaf1ac0347264560706c77c assets/machinix/lang/en_us.json
+84220acda6e498a400e17dea7fdf8d433119a6e1 assets/machinix/blockstates/uranium_ore.json
+c8cb5e10a3a64e74856fa9f7c8100ae901fad25a assets/machinix/lang/en_us.json
 5fbef1110b3617dfd39a6c440b84cb2a15b24c61 assets/machinix/models/block/macerator_block.json
+2d3a729c5a276d8806636c2ec9c2e1ded7a0e404 assets/machinix/models/block/uranium_ore.json
 954b38d31e35abc47684d139861b165e76c91a2f assets/machinix/models/item/macerator_block.json
+eaa933f60dc9500ebfc1e8befc9da3e3d81dc23f assets/machinix/models/item/uranium.json
+7d553f852cace6dce0c5f2d362fb794d77367958 assets/machinix/models/item/uranium_ore.json

@@ -25,8 +25,8 @@ public class MaceratorContainer extends Container {
     private static final int PLAYER_INVENTORY_COLUMN_COUNT = 9;
     private static final int PLAYER_INVENTORY_SLOT_COUNT = PLAYER_INVENTORY_COLUMN_COUNT * PLAYER_INVENTORY_ROW_COUNT;
     private static final int VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT;
+    private static final int TE_INVENTORY_FIRST_SLOT_INDEX = 0 + VANILLA_SLOT_COUNT;
     private static final int VANILLA_FIRST_SLOT_INDEX = 0;
-    private static final int TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
     private static final int TE_INVENTORY_SLOT_COUNT = 2;
     private final MaceratorBlockTileEntity tileEntity;
     private final World world;
@@ -35,7 +35,7 @@ public class MaceratorContainer extends Container {
     private final IIntArray maceratorData;
 
     public MaceratorContainer(int windowId, PlayerInventory playerInv, PacketBuffer extraData) {
-        this(windowId, playerInv, playerInv.player.world.getTileEntity(extraData.readBlockPos()), new IntArray(2));
+        this(windowId, playerInv, playerInv.player.world.getTileEntity(extraData.readBlockPos()), new IntArray(4));
     }
 
     public MaceratorContainer(int windowId, PlayerInventory playerInventory, TileEntity tileEntity, IIntArray data) {
@@ -96,6 +96,14 @@ public class MaceratorContainer extends Container {
         int progressArrowSize = 26; // This is the height in pixels of your arrow
 
         return progress != 0 ? progress * progressArrowSize / maxProgress : 0;
+    }
+
+    public int getEnergyStored() {
+        return maceratorData.get(2);
+    }
+
+    public int getMaxEnergyStored() {
+        return maceratorData.get(3);
     }
 
     @Override
